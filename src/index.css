@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* custom dark background */
+body {
+  @apply bg-secondary text-light;
+}
+
+/* scrollbar dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-primary;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-accent rounded-lg;
+}
