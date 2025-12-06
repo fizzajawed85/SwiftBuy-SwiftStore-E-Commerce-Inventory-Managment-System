@@ -81,7 +81,7 @@ export default function App() {
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/contact" element={<Contact />} />
 
-          {/* Protected (User must login) */}
+          {/* Protected User Routes */}
           <Route
             path="/cart"
             element={
@@ -112,7 +112,7 @@ export default function App() {
           element={<AdminLogin setAdminLoggedIn={setAdminLoggedIn} />}
         />
 
-        {/* Admin Protected Routes */}
+        {/* Protected Admin Routes */}
         <Route
           path="/admin/dashboard"
           element={
