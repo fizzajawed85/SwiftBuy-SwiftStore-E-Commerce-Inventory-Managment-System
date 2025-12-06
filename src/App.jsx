@@ -14,8 +14,8 @@ import ProductDetails from "./pages/ProductDetails.jsx";
 import Cart from "./pages/Cart.jsx";
 import Wishlist from "./pages/Wishlist.jsx";
 import Contact from "./pages/Contact.jsx";
-import Login from "./pages/Auth/Login.jsx";
-import Signup from "./pages/Auth/Signup.jsx";
+import Login from "./pages/auth/Login.jsx";
+import Signup from "./pages/auth/Signup.jsx";
 
 // Admin Pages
 import Dashboard from "./pages/admin/Dashboard.jsx";
