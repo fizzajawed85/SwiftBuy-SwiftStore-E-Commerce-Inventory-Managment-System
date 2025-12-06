@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { auth } from "./firebase/config.js";
@@ -11,24 +11,28 @@ import Home from "./pages/Home.jsx";
 import About from "./pages/About.jsx";
 import Shop from "./pages/Shop.jsx";
 import ProductDetails from "./pages/ProductDetails.jsx";
+import Contact from "./pages/Contact.jsx";
+
+// Protected Pages
 import Cart from "./pages/Cart.jsx";
 import Wishlist from "./pages/Wishlist.jsx";
-import Contact from "./pages/Contact.jsx";
-import Login from "./pages/auth/Login.jsx";
-import Signup from "./pages/auth/Signup.jsx";
 
 // Admin Pages
 import Dashboard from "./pages/admin/Dashboard.jsx";
 import Products from "./pages/admin/Products.jsx";
 import Orders from "./pages/admin/Orders.jsx";
 import Categories from "./pages/admin/Categories.jsx";
+import AdminLogin from "./pages/admin/AdminLogin.jsx";
 
 // Components
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import ProtectedAdminRoute from "./components/AdminProtectedRoute.jsx";
+import Login from "./pages/auth/Login.jsx";
+import Signup from "./pages/auth/Signup.jsx";
 
-// Layout wrapper for Public pages
+// Layout
 const PublicLayout = () => (
   <div className="min-h-screen flex flex-col bg-gray-900 text-gray-100">
     <Navbar />
@@ -43,9 +47,12 @@ export default function App() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
 
-  // Listen for Firebase auth state
+  // Admin state
+  const [adminLoggedIn, setAdminLoggedIn] = useState(false);
+
+  // Firebase auth listener for normal users
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsub = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
         dispatch(
           loginSuccess({
@@ -60,52 +67,87 @@ export default function App() {
       }
     });
 
-    return () => unsubscribe();
+    return () => unsub();
   }, [dispatch]);
 
   return (
     <Router>
       <Routes>
-        {/* Public Routes */}
+        {/* Public Layout */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/product/:id" element={<ProductDetails />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/contact" element={<Contact />} />
+
+          {/* Protected (User must login) */}
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute>
+                <Cart />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/wishlist"
+            element={
+              <ProtectedRoute>
+                <Wishlist />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Auth Pages */}
           <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
           <Route path="/signup" element={user ? <Navigate to="/" /> : <Signup />} />
 
-          {/* Public catch-all */}
           <Route path="*" element={<Navigate to="/" />} />
         </Route>
 
-        {/* Admin Routes (Protected, no layout here) */}
-        <Route path="/admin/dashboard" element={
-          <ProtectedRoute user={user}>
-            <Dashboard />
-          </ProtectedRoute>
-        }/>
-        <Route path="/admin/products" element={
-          <ProtectedRoute user={user}>
-            <Products />
-          </ProtectedRoute>
-        }/>
-        <Route path="/admin/orders" element={
-          <ProtectedRoute user={user}>
-            <Orders />
-          </ProtectedRoute>
-        }/>
-        <Route path="/admin/categories" element={
-          <ProtectedRoute user={user}>
-            <Categories />
-          </ProtectedRoute>
-        }/>
+        {/* Admin Login */}
+        <Route
+          path="/admin/login"
+          element={<AdminLogin setAdminLoggedIn={setAdminLoggedIn} />}
+        />
+
+        {/* Admin Protected Routes */}
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedAdminRoute adminLoggedIn={adminLoggedIn}>
+              <Dashboard />
+            </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="/admin/products"
+          element={
+            <ProtectedAdminRoute adminLoggedIn={adminLoggedIn}>
+              <Products />
+            </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="/admin/orders"
+          element={
+            <ProtectedAdminRoute adminLoggedIn={adminLoggedIn}>
+              <Orders />
+            </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="/admin/categories"
+          element={
+            <ProtectedAdminRoute adminLoggedIn={adminLoggedIn}>
+              <Categories />
+            </ProtectedAdminRoute>
+          }
+        />
 
         {/* Admin catch-all */}
-        <Route path="/admin/*" element={<Navigate to="/admin/dashboard" />} />
+        <Route path="/admin/*" element={<Navigate to="/admin/login" />} />
       </Routes>
     </Router>
   );

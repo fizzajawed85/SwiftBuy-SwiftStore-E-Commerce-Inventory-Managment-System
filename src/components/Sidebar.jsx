@@ -9,12 +9,12 @@ import {
   FaStore,
   FaHome,
   FaBars,
-  FaTimes,
 } from "react-icons/fa";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom"; // useNavigate import kiya
 
 export default function Sidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const navigate = useNavigate(); // redirect ke liye
 
   const links = [
     { name: "Dashboard", icon: <FaTachometerAlt />, path: "/admin/dashboard" },
@@ -24,6 +24,12 @@ export default function Sidebar() {
     { name: "Shop", icon: <FaShoppingBag />, path: "/shop" },
     { name: "Home", icon: <FaHome />, path: "/" },
   ];
+
+  // Logout function
+  const handleLogout = () => {
+    sessionStorage.removeItem("isAdmin"); // admin session clear
+    navigate("/admin/login"); // admin login page par redirect
+  };
 
   return (
     <>
@@ -50,7 +56,10 @@ export default function Sidebar() {
           ))}
         </nav>
 
-        <button className="flex items-center bg-gray-700 gap-4 p-3 m-4 rounded-lg hover:bg-gray-600 transition">
+        <button
+          onClick={handleLogout} // logout function call
+          className="flex items-center bg-gray-700 gap-4 p-3 m-4 rounded-lg hover:bg-gray-600 transition"
+        >
           <FaSignOutAlt className="text-red-500 text-lg" />
           <span className="font-medium text-red-500">Logout</span>
         </button>
@@ -70,7 +79,7 @@ export default function Sidebar() {
         </button>
       </div>
 
-      {/* Mobile Sidebar Menu (full width below navbar) */}
+      {/* Mobile Sidebar Menu */}
       {mobileOpen && (
         <div className="md:hidden bg-gray-800 flex flex-col p-4 gap-2">
           {links.map((link) => (
@@ -88,7 +97,10 @@ export default function Sidebar() {
             </NavLink>
           ))}
 
-          <button className="flex items-center bg-gray-700 gap-4 p-3 rounded-lg hover:bg-gray-600 transition mt-2">
+          <button
+            onClick={handleLogout} // mobile logout
+            className="flex items-center bg-gray-700 gap-4 p-3 rounded-lg hover:bg-gray-600 transition mt-2"
+          >
             <FaSignOutAlt className="text-red-500 text-lg" />
             <span className="font-medium text-red-500">Logout</span>
           </button>
