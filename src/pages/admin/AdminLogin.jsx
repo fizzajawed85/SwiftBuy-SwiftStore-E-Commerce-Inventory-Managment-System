@@ -5,8 +5,8 @@ import { Eye, EyeOff } from "lucide-react";
 
 export default function AdminLogin({ setAdminLoggedIn }) {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("fizzajawed012@gmail.com");
+  const [password, setPassword] = useState("fjAdmin@012#*");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
